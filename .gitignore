@@ -8,3 +8,10 @@ Debug/bike.exe
 Debug/src/bike.o
 freeglut.dll
 Release/src/bike.o
+Debug/bike
+Debug/makefile
+Debug/objects.mk
+Debug/sources.mk
+Debug/src/bike.d
+Debug/src/subdir.mk
+/Debug/

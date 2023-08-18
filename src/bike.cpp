@@ -200,7 +200,6 @@ void move_wheel(){
 		is_gravity = 0;
        	checkwall ch;
        	int i = 0;
-       	//printf("\n");
 
     	while(++i){
     		ch = check_of_cross();
@@ -210,7 +209,6 @@ void move_wheel(){
             	wheel.center = temp; // возврат
             	proj_contact = {0, 0};
             	if (i == TOUCHES){
-            		printf("stop %d\n", it++);
             		is_gravity = 0;
             		break;
             	}
