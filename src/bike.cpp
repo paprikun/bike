@@ -195,7 +195,6 @@ checkwall check_of_cross() //поиск точки касания M, опред�
 	return ret;
 }
 
-bool inspect = 0;
 void print(vec pr){
 	printf("%f %f \n", pr.dx, pr.dy);
 }
@@ -255,7 +254,7 @@ void move_wheel(){
 						pedal_rotation.dx = pPower * (proj.dx / len_proj);
 						pedal_rotation.dy = pPower * (proj.dy / len_proj);
 
-						if (pedal_rotation.dy / pPower == 1 && inspect == 0 && pedal_rotation.dx == 0){
+						if (pedal_rotation.dy / pPower == 1 && pedal_rotation.dx == 0){
 							pedal_rotation.dx = pPower;
 						}
     				}
@@ -375,9 +374,6 @@ void processSpecialKeys(int key, int x, int y) {
 			key_up_on = 1;
 			break;
 
-		case GLUT_KEY_LEFT :
-			inspect = 1;
-			break;
 	}
 }
 void processSpecialKeysup(int key, int x, int y) {
