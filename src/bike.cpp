@@ -12,13 +12,23 @@
 #include <math.h>
 #include <time.h>
 
-#define Wi 200
+#define Wi 400
 #define Hi 200
 time_t sys_time_first =  0;//=clock();
 time_t sys_time_second = 0;//=clock();
 short rotation_sense_init = 1; //изначальное напрвление движения
 float PedalPower = 0.0;
 short rotation_sense = 1;
+
+#if defined(__linux) || defined(__linux__)
+float KEY_STEP = 0.0005;
+float GRAVITY_STEP = 0.0002;
+#else
+float KEY_STEP = 0.002;
+float GRAVITY_STEP = 0.0008;
+#endif
+
+
 struct point{
 	float x;
 	float y;
@@ -39,7 +49,7 @@ struct checkwall{
 	line_type line;
 	bool result;
 };
-circle wheel = {{30, (5) * 20 + 50 + 3.5}, 7, 20};
+circle wheel = {{30, (5) * 20 + 50 + 7}, 7, 20};
 
 float xx = wheel.r / sqrt(3);
 line_type lines[] = {
@@ -52,10 +62,15 @@ line_type lines[] = {
 					{{95,95},{95, 5}},//стена
 					{{25,50},{15, 55}},//малый скат
 					{{25,50},{51, 50}},//нижний пол
-					{{52,50},{75, 50}},//нижний пол
-					{{52,50},{52, 54}},//нижний пол
-					{{15,58},{0, 73}},//первый скат
-					{{15,58},{0, 73}},
+					{{52,40},{75, 40}},//нижний пол
+					{{52,40},{52, 52}},//заборчик
+					{{52,52},{75, 40}},//наклон
+
+					{{75,40},{75, 56}},//короткая стенка
+
+
+					{{15,57},{0, 72}},//первый скат
+					//{{15,58},{0, 73}},
 
 
 //					{{30 + xx, 59},{30 + 2 * xx, 59 + wheel.r}},
@@ -179,16 +194,25 @@ checkwall check_of_cross() //поиск точки касания M, опред�
 	ret.result = 0;
 	return ret;
 }
+
+bool inspect = 0;
 void print(vec pr){
 	printf("%f %f \n", pr.dx, pr.dy);
 }
 int it = 0;
 #define TOUCHES 3
+
+#include <vector>
+#include <algorithm>    // std::find
+
 void move_wheel(){
 	static vec pedal_rotation = {0, 0};
 	static bool is_gravity = 0;
-
-	proj.dy -= 0.0002; // гравитация
+#if defined(__linux) || defined(__linux__)
+	proj.dy -= GRAVITY_STEP;
+#else
+	proj.dy -= GRAVITY_STEP;//увеличиваем значение вектора падения
+#endif
 	{
 		point temp = wheel.center;
 		if (is_gravity == 0){
@@ -196,31 +220,32 @@ void move_wheel(){
 			wheel.center.y += proj.dy;
 		}
     	//цикл состоит из TOUCHES числа проверок
-
 		is_gravity = 0;
-       	checkwall ch;
-       	int i = 0;
+      	int i = 0;
+      	std::vector <int> walls_checked = {};
 
     	while(++i){
-    		ch = check_of_cross();
+    		checkwall ch = check_of_cross();
             if (ch.result != 0){
 
-        		pedal_rotation = {0, 0};
+        		pedal_rotation = proj_contact = {0, 0};
             	wheel.center = temp; // возврат
-            	proj_contact = {0, 0};
-            	if (i == TOUCHES){
+            	//сохраняем номера проверенных стен
+            	if ( std::find(walls_checked.begin(), walls_checked.end(), ch.i) != walls_checked.end() ){
             		is_gravity = 0;
-            		break;
-            	}
+					break;
+				}
+				else{
+					walls_checked.push_back(ch.i);
+				}
     			proj = vector_projection(ch, proj.dx, proj.dy);//Рассчет нового вектора движения
-    			//рассчет направления вращения (-1 по часовой)
+    			proj_contact = proj;
+    			//рассчет направления вращения (1 по часовой)
     			vec rad; //вектор от центра до точки касания с поверхностью
     			rad.dx = ch.M.x - wheel.center.x;
     			rad.dy = ch.M.y - wheel.center.y;
-
     			//определяем по векторному произведению векторов направление вращения
-				rotation_sense = (proj.dx * rad.dy - proj.dy * rad.dx) > 0 ? 1 : -1;
-
+				rotation_sense = (proj.dx * rad.dy - proj.dy * rad.dx) > 0 ? -1 : 1;
     		    //отработка силы педалей
     			if (PedalPower!=0){
 
@@ -229,16 +254,14 @@ void move_wheel(){
     					float pPower = PedalPower;
 						pedal_rotation.dx = pPower * (proj.dx / len_proj);
 						pedal_rotation.dy = pPower * (proj.dy / len_proj);
+
+						if (pedal_rotation.dy / pPower == 1 && inspect == 0 && pedal_rotation.dx == 0){
+							pedal_rotation.dx = pPower;
+						}
     				}
     			}
-    			proj_contact = proj;
-        		float pPower =  PedalPower;
-    			if ((pedal_rotation.dx == 0 && pedal_rotation.dy == 0) || (pow(pedal_rotation.dx, 2) + pow(pedal_rotation.dy, 2) == pow(pPower, 2))){
-    				pedal_rotation.dx = pPower * rotation_sense_init;
-    				pedal_rotation.dy = 0;
-    			}
-    			proj.dx += pedal_rotation.dx * (-rotation_sense);
-    			proj.dy += pedal_rotation.dy * (-rotation_sense);
+    			proj.dx += pedal_rotation.dx * (rotation_sense);
+    			proj.dy += pedal_rotation.dy * (rotation_sense);
 
     			wheel.center.x += proj.dx;
     	    	wheel.center.y += proj.dy;
@@ -272,27 +295,28 @@ void draw_wheel(void)
     	glVertex2f(wheel.center.x  + wheel.r * cos(anlge), wheel.center.y  + wheel.r * sin(anlge));
     glEnd();
 //вектор движения
-//    glBegin(GL_LINES);
-//    	glVertex2f(wheel.center.x, wheel.center.y);
-//    	float len = sqrt(pow(proj.dx, 2) + pow(proj.dy, 2));
-//    	float koef = 5*wheel.r / len;
-//    	glVertex2f(wheel.center.x  + proj.dx * koef, wheel.center.y  + proj.dy * koef);
-//    glEnd();
+    glBegin(GL_LINES);
+    	glVertex2f(wheel.center.x, wheel.center.y);
+    	float len = sqrt(pow(proj.dx, 2) + pow(proj.dy, 2));
+    	float koef = 5*wheel.r / len;
+    	glVertex2f(wheel.center.x  + proj.dx * koef, wheel.center.y  + proj.dy * koef);
+    glEnd();
 
 
     float len_proj = sqrt(pow(proj_contact.dx, 2) + pow(proj_contact.dy, 2));
 
 
-    cadrs++;
-    if (wheel.center.y <= 57.00000 && sys_time_second == 0)
-    {
-    	sys_time_second = clock();
-    	printf("falled, %ld, %d\n", (sys_time_second - sys_time_first)/1000, cadrs);
-    }
+//    cadrs++;
+//    if (wheel.center.y <= 57.00000 && sys_time_second == 0)
+//    {
+//    	sys_time_second = clock();
+//    	int fall_time = sys_time_second - sys_time_first;
+//    	printf("falled, %ld, %d\n", (sys_time_second - sys_time_first)/1000, cadrs);
+//    }
     if (sys_time_first == 0)
     sys_time_first=clock();
 
-    anlge += rotation_sense * (len_proj) / (wheel.r);
+    anlge -= rotation_sense * (len_proj) / (wheel.r);
 }
 void draw_whalls(void)
 {
@@ -325,10 +349,10 @@ void renderScene(void)
 		move_wheel();
 		//инерция нажатия клавиш
 		if (key_down_on == 1 && key_up_on == 0){
-			PedalPower = -0.0005; //крутим педали в обратную сторону
+			PedalPower = -KEY_STEP; //крутим педали в обратную сторону
 		}
 		if (key_down_on == 0 && key_up_on == 1){
-			PedalPower = 0.0005;
+			PedalPower = KEY_STEP;
 		}
 		//glFlush();
 		glutSwapBuffers();
@@ -349,6 +373,10 @@ void processSpecialKeys(int key, int x, int y) {
 			break;
 		case GLUT_KEY_UP :
 			key_up_on = 1;
+			break;
+
+		case GLUT_KEY_LEFT :
+			inspect = 1;
 			break;
 	}
 }
@@ -373,7 +401,7 @@ int main(int argc, char** argv)
 
 	glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE);
-    glutInitWindowSize(500, 500);
+    glutInitWindowSize(1000, 500);
     //glutInitWindowPosition(3000, 1000);
 #if defined(__linux) || defined(__linux__)
     glutInitWindowPosition(3300, 900);
