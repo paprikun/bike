@@ -1,168 +1,94 @@
-//============================================================================
-// Name        : bike.cpp
-// Author      :
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
-//============================================================================
+/*
+ * bike.cpp
+ *
+ *  Created on: 26 дек. 2023 г.
+ *      Author: user
+ */
+
+#include "bike.h"
+
+bike_dynamic bike;
 
 
-
-#include "common.h"
-#include "wheel_dynamic.h"
-#include "edges.h"
-#include "keyboard.h"
-
-#define Wi 600
-#define Hi 300
-time_t sys_time_first =  0;
-time_t sys_time_second = 0;
-
-
-
-
-
-void graph_init(){
-
-//нужна авто-проверка, если точек будет много!!
-//можно убирать некоторые связи
-
-	wheel_dyn_1 = wheel_dynamic({{30, 145 + 100 + 7 + 0}, 7, 20}, 1, 1);
-	wheel_dyn_2 = wheel_dynamic({{60, 145 + 100 + 7 + 0}, 7, 20}, 0, 1);
-	head_dyn 	= wheel_dynamic({{45, 145 + 100 + 7 + 17}, 4, 20}, 0, 13);
-
-
-
-	edges[0] = {&wheel_dyn_1, &wheel_dyn_2, 0};
-	edges[0].length = 30;
-
-	edges[1] = {&wheel_dyn_1, &head_dyn, 0};
-	edges[1].length = EDGE_1_LEN_AVER;
-
-	edges[2] = {&wheel_dyn_2, &head_dyn, 0};
-	edges[2].length = EDGE_2_LEN_AVER;
-
-
-
-
+float bike_dynamic::x_p(point pp) {
+	return ((pp.x - p1.x) * cosa - (pp.y - p1.y) * sina + p1.x);
+}
+float bike_dynamic::y_p(point pp) {
+	return ((pp.x - p1.x) * sina + (pp.y - p1.y) * cosa + p1.y);
 }
 
 
-point wheel_dyn_1_center_telemetry;
-time_t sys_time_telemetry;
-bool telemetry_timer_started = 0;
-int telemetry_timer = 0;
+bike_dynamic::bike_dynamic(){
 
+	float k = 0.02;
+	chainstay = frame_chainstay * k;
+	stack = frame_stack * k;
+	reach = frame_reach * k;
+	headtube = frame_headtube * k;
+	seattube = frame_seattube * k;
+	HT_angle = frame_HT_angle;
+	ST_angle = frame_ST_angle;
+	bb_drop = frame_bb_drop * k;
 
-void telemetry(){
+	cosa = 1;
+	sina = 0;
 
-	if (telemetry_timer_started == 0){
-
-		sys_time_telemetry=clock();
-		telemetry_timer_started = 1;
-		wheel_dyn_1_center_telemetry = wheel_dyn_1.wheel.center;
-
-	}
-	if (clock() - sys_time_telemetry >= 100){
-
-		float wheel_dyn_1_center_len = 0.5 * len(wheel_dyn_1.wheel.center, wheel_dyn_1_center_telemetry);
-		wheel_dyn_1_center_telemetry = wheel_dyn_1.wheel.center;
-		telemetry_timer += 100;
-		printf("%6.3f s   %6.3f m/s \n", (float)telemetry_timer / 1000 , wheel_dyn_1_center_len);//1м = 20
-		sys_time_telemetry = clock();
-	}
 
 }
-void renderScene(void)
-{
-	static time_t last_sys_time = 0;
+void bike_dynamic::draw_bike(){
 
-	time_t sys_time=clock();
-#if defined(__linux) || defined(__linux__)
-	if (sys_time - last_sys_time >  1000)
-#else
-		if (sys_time - last_sys_time > 1)
-#endif
+	int inv = 1;
+	point bw1 = wheel_dyn_1.wheel.center;
+	point bw2 = wheel_dyn_2.wheel.center;
 
-	{
-		glColor3f(0.0f, 0.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		//glLoadIdentity();
-		draw_whalls();
-
-
-		connect_to_group();
-
-
-
-
-
-		wheel_dyn_1.draw_wheel();
-		wheel_dyn_2.draw_wheel();
-
-		head_dyn.draw_wheel();
-
-
-		wheel_dyn_1.move_wheel();
-		wheel_dyn_2.move_wheel();
-		head_dyn.move_wheel();
-
-
-		telemetry();
-
-
-
-		keyboard_inertion();
-
-		if (key_f5_on == 1){
-			key_f5_on = 2;
-		 	keyboard_init();
-			graph_init();
-		}
-
-		//glFlush();
-		glutSwapBuffers();
-		last_sys_time = sys_time;
+	if (wheel_dyn_2.back_wheel){
+		bw1 = wheel_dyn_2.wheel.center;
+		bw2 = wheel_dyn_1.wheel.center;
+		inv = -1;
 	}
-}
+
+//	float chainstay = frame_chainstay * k;
+//	float stack = frame_stack * k;
+//	float reach = frame_reach * k;
+//	float headtube = frame_headtube * k;
+//	float seattube = frame_seattube * k;
+//	float HT_angle = frame_HT_angle;
+//	float ST_angle = frame_ST_angle;
+//	float bb_drop = frame_bb_drop * k;
 
 
-
-int main(int argc, char** argv)
-{
-
-
- 	glutInit(&argc, argv);
-
- 	keyboard_init();
-	graph_init();
-
-    glutInitDisplayMode(GLUT_SINGLE);
-    glutInitWindowSize(1000, 500);
-    //glutInitWindowPosition(3000, 1000);
-#if defined(__linux) || defined(__linux__)
-    glutInitWindowPosition(3300, 900);
-#else
-    glutInitWindowPosition(0, 300);
-#endif
-    glutCreateWindow("my bike");
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
- //   glViewport(0, 0, (GLint)nWidth, (GLint)nHeight);
-//    glMatrixMode(GL_PROJECTION);
-//    glLoadIdentity();
-    glOrtho(0, Wi, 0.0, Hi, -1.0, 1.0);
- //   glViewport(0, 0, (GLint)nWidth, (GLint)nHeight);
-    glutDisplayFunc(renderScene);
-	//glutReshapeFunc(changeSize);
-	glutIdleFunc(renderScene);
+	cosa = (bw2.x - bw1.x) / len(bw1, bw2);
+	sina = (bw2.y - bw1.y) / len(bw1, bw2);
 
 
-    glutKeyboardFunc(processNormalKeys);
-    glutKeyboardUpFunc(processNormalKeysup);
+	p1 = {bw1.x, bw1.y};
+	point p2 = {p1.x  + chainstay, p1.y - bb_drop * inv};
+	point p3 = {(float)(p2.x - seattube * cos(ST_angle / 180 * M_PI)), (float)(p2.y + seattube * sin(ST_angle / 180 * M_PI) * inv)};
+	point p4 = {p2.x + reach, p2.y + stack * inv};
+	point p5 = {(float)(p4.x + headtube * cos(HT_angle / 180 * M_PI)), (float)(p4.y - headtube * sin(HT_angle / 180 * M_PI) * inv)};
+	point p6 = {bw2.x, bw2.y};
 
-    glutSpecialFunc(processSpecialKeys);
-    glutSpecialUpFunc(processSpecialKeysup);
+	glBegin(GL_LINE_LOOP );
+		glVertex2f(p1.x, p1.y);
+		glVertex2f(x_p(p2), y_p(p2));
+		glVertex2f(x_p(p5), y_p(p5));
+		glVertex2f(x_p(p4), y_p(p4));
+		glVertex2f(x_p(p3), y_p(p3));
 
-    glutMainLoop();
-	return 0;
+    glEnd();
+
+	glBegin(GL_LINES );
+	glVertex2f(x_p(p2), y_p(p2));
+		glVertex2f(x_p(p3), y_p(p3));
+    glEnd();
+
+	glBegin(GL_LINES );
+		glVertex2f(x_p(p4), y_p(p4));
+		glVertex2f(p6.x, p6.y);
+
+    glEnd();
+
+    glColor3d(0,0,0);
+
+
 }

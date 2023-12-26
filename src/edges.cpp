@@ -55,7 +55,6 @@ vec calc_step_of_one_member_in_pair(wheel_dynamic* wheel_d_1, wheel_dynamic* whe
 
 			if ((wheel_d_1 == &wheel_dyn_1 && wheel_d_2 == &wheel_dyn_2)||(wheel_d_1 == &wheel_dyn_2 && wheel_d_2 == &wheel_dyn_1))
 				return (step0 / 2 + step1 / 1) / 1;//ошибочный коэффициент для рамы
-
 //k1 = 2 k2 = 64 супер медлленный отскок
 //k1 = 1 k2 = 64 медлленный отскок
 //k1 = 1 k2 = 32 средений отскок
