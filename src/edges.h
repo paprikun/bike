@@ -11,10 +11,10 @@
 #include "wheel_dynamic.h"
 #include "common.h"
 
-#define EDGE_1_LEN_MIN 12.0
-#define EDGE_1_LEN_MAX 22.0
-#define EDGE_2_LEN_MIN 12.0
-#define EDGE_2_LEN_MAX 22.0
+#define EDGE_1_LEN_MIN 14.0
+#define EDGE_1_LEN_MAX 18.0
+#define EDGE_2_LEN_MIN 14.0
+#define EDGE_2_LEN_MAX 26.0
 #define EDGE_COUNT_STEP 200
 #define EDGE_1_LEN_STEP ((EDGE_1_LEN_MAX - EDGE_1_LEN_MIN) / EDGE_COUNT_STEP)
 #define EDGE_2_LEN_STEP ((EDGE_2_LEN_MAX - EDGE_2_LEN_MIN) / EDGE_COUNT_STEP)

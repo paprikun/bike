@@ -20,6 +20,13 @@
 #define frame_ST_angle   74
 #define frame_bb_drop    25
 
+#define system_stick_1	 175
+#define system_stick_2	 system_stick_1
+#define system_star_rad	 50
+
+#define rider_hip 450
+#define rider_knee 450
+
 #define WHLR 6.77
 class bike_dynamic{
 public:
@@ -40,6 +47,14 @@ protected:
 	float HT_angle;
 	float ST_angle;
 	float bb_drop;
+
+	float stick_1;
+	float stick_2;
+	circle star;
+
+	float hip;
+	float knee;
+
 
 
 

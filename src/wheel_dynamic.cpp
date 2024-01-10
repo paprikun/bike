@@ -10,7 +10,7 @@
 #include "keyboard.h"
 wheel_dynamic wheel_dyn_1;
 wheel_dynamic wheel_dyn_2;
-wheel_dynamic head_dyn;
+wheel_dynamic rider_center;
 
 
 

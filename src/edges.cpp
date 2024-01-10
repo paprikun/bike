@@ -79,8 +79,8 @@ vec calc_step_of_one_member_in_pair(wheel_dynamic* wheel_d_1, wheel_dynamic* whe
 
 void connect_to_group(){
 
-//	edges[i++] = {&wheel_dyn_1, &head_dyn, 0};
-//	edges[i++] = {&wheel_dyn_2, &head_dyn, 0};
+//	edges[i++] = {&wheel_dyn_1, &rider_center, 0};
+//	edges[i++] = {&wheel_dyn_2, &rider_center, 0};
 
 
 	for (int i=0; i<EDGES_COUNT; i++){
