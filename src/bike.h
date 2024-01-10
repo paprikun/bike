@@ -27,6 +27,10 @@
 #define rider_hip 450
 #define rider_knee 450
 
+#define rider_torso 500
+#define rider_hand 600
+
+
 #define WHLR 6.77
 class bike_dynamic{
 public:
@@ -54,6 +58,8 @@ protected:
 
 	float hip;
 	float knee;
+	float torso;
+	float hand;
 
 
 

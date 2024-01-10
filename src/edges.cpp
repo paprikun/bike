@@ -54,7 +54,12 @@ vec calc_step_of_one_member_in_pair(wheel_dynamic* wheel_d_1, wheel_dynamic* whe
 		//printf("%f step1_added \n", len(AB) - LENGTH);
 
 			if ((wheel_d_1 == &wheel_dyn_1 && wheel_d_2 == &wheel_dyn_2)||(wheel_d_1 == &wheel_dyn_2 && wheel_d_2 == &wheel_dyn_1))
-				return (step0 / 2 + step1 / 1) / 1;//ошибочный коэффициент для рамы
+				return (step0 / 2 + step1 / 1) / 1;//твердый коэффициент для рамы
+
+			if ((wheel_d_1 == &rider_shoulders && wheel_d_2 == &rider_center)||(wheel_d_1 == &rider_center && wheel_d_2 == &rider_shoulders))
+				return (step0 / 2 + step1 / 1) / 1;//твердый коэффициент для спины райдера
+
+
 //k1 = 2 k2 = 64 супер медлленный отскок
 //k1 = 1 k2 = 64 медлленный отскок
 //k1 = 1 k2 = 32 средений отскок
@@ -69,7 +74,7 @@ vec calc_step_of_one_member_in_pair(wheel_dynamic* wheel_d_1, wheel_dynamic* whe
 
 
 			//return (step0 / 64 + step1 / 32) / 1;
-			return (step0 * k1 + step1 / k2) ;//ошибочный коэффициент для райдер - байк
+			return (step0 * k1 + step1 / k2) ;//мягкий коэффициент для райдер - байк
 
 
 	}

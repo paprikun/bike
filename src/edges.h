@@ -10,22 +10,39 @@
 
 #include "wheel_dynamic.h"
 #include "common.h"
+#include "bike.h"
 
-#define EDGE_1_LEN_MIN 14.0
-#define EDGE_1_LEN_MAX 18.0
-#define EDGE_2_LEN_MIN 14.0
-#define EDGE_2_LEN_MAX 26.0
+#define wb1  ((float) WHEEL_BASE / 100 * 2)
+#define EDGE_1_LEN_MIN wb1
+#define EDGE_1_LEN_MAX wb1
+#define EDGE_2_LEN_MIN wb1
+#define EDGE_2_LEN_MAX wb1
+
+#define EDGE_3_LEN_MIN (wb1 * sqrt(2))
+#define EDGE_3_LEN_MAX (wb1 * sqrt(2))
+
+#define EDGE_4_LEN_MIN wb1
+#define EDGE_4_LEN_MAX wb1
+
 #define EDGE_COUNT_STEP 200
 #define EDGE_1_LEN_STEP ((EDGE_1_LEN_MAX - EDGE_1_LEN_MIN) / EDGE_COUNT_STEP)
 #define EDGE_2_LEN_STEP ((EDGE_2_LEN_MAX - EDGE_2_LEN_MIN) / EDGE_COUNT_STEP)
+#define EDGE_3_LEN_STEP ((EDGE_3_LEN_MAX - EDGE_3_LEN_MIN) / EDGE_COUNT_STEP)
+#define EDGE_4_LEN_STEP ((EDGE_4_LEN_MAX - EDGE_4_LEN_MIN) / EDGE_COUNT_STEP)
+
+
+
 #define EDGE_1_LEN_AVER ((EDGE_1_LEN_MAX - EDGE_1_LEN_MIN)/2 + EDGE_1_LEN_MIN)
 #define EDGE_2_LEN_AVER ((EDGE_2_LEN_MAX - EDGE_2_LEN_MIN)/2 + EDGE_2_LEN_MIN)
+#define EDGE_3_LEN_AVER ((EDGE_3_LEN_MAX - EDGE_3_LEN_MIN)/2 + EDGE_3_LEN_MIN)
+#define EDGE_4_LEN_AVER ((EDGE_4_LEN_MAX - EDGE_4_LEN_MIN)/2 + EDGE_4_LEN_MIN)
 
 
-#define EDGES_COUNT 3
+#define EDGES_COUNT 4
 struct edge{
 	wheel_dynamic* A;
 	wheel_dynamic* B;
+
 	float length;
 
 };

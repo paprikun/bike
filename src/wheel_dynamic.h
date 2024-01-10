@@ -59,5 +59,7 @@ class wheel_dynamic{
 extern wheel_dynamic wheel_dyn_1;
 extern wheel_dynamic wheel_dyn_2;
 extern wheel_dynamic rider_center;
+extern wheel_dynamic rider_shoulders;
+
 
 #endif /* WHEEL_DYNAMIC_H_ */

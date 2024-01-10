@@ -39,6 +39,8 @@ bike_dynamic::bike_dynamic(){
 	hip  = rider_hip * k;
 	knee  = rider_knee * k;
 
+	torso  = rider_torso * k;
+	hand  = rider_hand * k;
 
 
 }
@@ -177,26 +179,11 @@ void bike_dynamic::draw_bike(){
    // {
 
 
-		triangle (rider_center.wheel.center, temp2, hip, knee, 1);
-		triangle (rider_center.wheel.center, temp4, hip, knee, 1);
+//		triangle (rider_center.wheel.center, temp2, hip, knee, 1);
+//		triangle (rider_center.wheel.center, temp4, hip, knee, 1);
+//		triangle (rider_center.wheel.center, p4, torso, hand, 1);
 
-		//	glBegin(GL_LINES);
-//		point temp5 = {x_p(temp2), y_p(temp2)};
-//		point temp6 = {rider_center.wheel.center.x, rider_center.wheel.center.y};
-//		glVertex2f((temp5.x), (temp5.y));
-//		glVertex2f((temp6.x), (temp6.y));
-//
-//	glEnd();
-//    }
-//    {
-//	glBegin(GL_LINES);
-//		point temp7 = {x_p(temp4), y_p(temp4)};
-//		point temp8 = {rider_center.wheel.center.x, rider_center.wheel.center.y};
-//		glVertex2f((temp7.x), (temp7.y));
-//		glVertex2f((temp8.x), (temp8.y));
-//
-//	glEnd();
-//    }
+
 
 
 

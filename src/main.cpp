@@ -34,6 +34,7 @@ void graph_init(){
 	wheel_dyn_2 = wheel_dynamic({{30 + wb, 145 + 100 + WHLR + 0}, WHLR, 20}, 0, 1);
 	rider_center 	= wheel_dynamic({{45, 145 + 100 + WHLR + 17}, 4, 20}, 0, 13);
 
+	rider_shoulders 	= wheel_dynamic({{60 + wb, 145 + 100 + WHLR + 0}, 4, 20}, 0, 1);
 
 
 	edges[0] = {&wheel_dyn_1, &wheel_dyn_2, 0};
@@ -45,9 +46,11 @@ void graph_init(){
 	edges[2] = {&wheel_dyn_2, &rider_center, 0};
 	edges[2].length = EDGE_2_LEN_AVER;
 
+	edges[3] = {&rider_center, &rider_shoulders, 0};
+	edges[3].length = EDGE_3_LEN_AVER;
 
-
-
+	edges[4] = {&rider_shoulders, &wheel_dyn_2, 0};
+	edges[4].length = EDGE_4_LEN_AVER;
 }
 
 
@@ -103,13 +106,14 @@ void renderScene(void)
 		wheel_dyn_1.draw_wheel();
 		wheel_dyn_2.draw_wheel();
 		bike.draw_bike();
-
+		rider_shoulders.draw_wheel();
 		rider_center.draw_wheel();
 
 
 		wheel_dyn_1.move_wheel();
 		wheel_dyn_2.move_wheel();
 		rider_center.move_wheel();
+		rider_shoulders.move_wheel();
 
 
 		telemetry();
