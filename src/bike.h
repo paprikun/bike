@@ -28,10 +28,10 @@
 #define rider_knee 450
 
 #define rider_torso 500
-#define rider_hand 600
+#define rider_hand 350
+#define rider_head	 130
 
-
-#define WHLR 6.77
+#define WHLR ((float)6.77)
 class bike_dynamic{
 public:
 	bike_dynamic();
@@ -60,7 +60,7 @@ protected:
 	float knee;
 	float torso;
 	float hand;
-
+	circle head;
 
 
 

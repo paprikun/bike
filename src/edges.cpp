@@ -5,7 +5,22 @@
  *      Author: user
  */
 #include "edges.h"
+float EDGE_0_LEN_AVER_START;
+float EDGE_1_LEN_AVER_START;
+float EDGE_2_LEN_AVER_START;
+float EDGE_3_LEN_AVER_START;
+float EDGE_4_LEN_AVER_START;
 
+void edges_init(){
+	EDGE_0_LEN_AVER_START = len(edges[0].A->wheel.center, edges[0].B->wheel.center);
+	EDGE_1_LEN_AVER_START = len(edges[1].A->wheel.center, edges[1].B->wheel.center);
+	EDGE_2_LEN_AVER_START = len(edges[2].A->wheel.center, edges[2].B->wheel.center);
+	EDGE_3_LEN_AVER_START = len(edges[3].A->wheel.center, edges[3].B->wheel.center);
+	EDGE_4_LEN_AVER_START = len(edges[4].A->wheel.center, edges[4].B->wheel.center);
+
+
+
+}
 edge edges[EDGES_COUNT];//массив ребер
 vec calc_step_of_one_member_in_pair(wheel_dynamic* wheel_d_1, wheel_dynamic* wheel_d_2, float init_len_1_center, float LENGTH){
 
@@ -60,6 +75,9 @@ vec calc_step_of_one_member_in_pair(wheel_dynamic* wheel_d_1, wheel_dynamic* whe
 				return (step0 / 2 + step1 / 1) / 1;//твердый коэффициент для спины райдера
 
 
+			//if ((wheel_d_1 == &rider_shoulders && wheel_d_2 == &wheel_dyn_2)||(wheel_d_1 == &wheel_dyn_2 && wheel_d_2 == &rider_shoulders))
+				//return (step0 / 2 + step1 / 1) / 1;//твердый коэффициент для спины райдера
+
 //k1 = 2 k2 = 64 супер медлленный отскок
 //k1 = 1 k2 = 64 медлленный отскок
 //k1 = 1 k2 = 32 средений отскок
@@ -72,9 +90,11 @@ vec calc_step_of_one_member_in_pair(wheel_dynamic* wheel_d_1, wheel_dynamic* whe
 			float k1 = (2);
 			float k2 = 64;
 
+			if ((wheel_d_1 == &rider_shoulders && wheel_d_2 == &wheel_dyn_2)||(wheel_d_1 == &wheel_dyn_2 && wheel_d_2 == &rider_shoulders))
+				return (step0 * 2 + step1 / 256) ;//мягкий коэффициент для плечи - переднее колесо
 
 			//return (step0 / 64 + step1 / 32) / 1;
-			return (step0 * k1 + step1 / k2) ;//мягкий коэффициент для райдер - байк
+			return (step0 * 8 + step1 / 64) ;//мягкий коэффициент для центр райдера - колесо (любое)
 
 
 	}

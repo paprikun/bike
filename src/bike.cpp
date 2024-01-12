@@ -41,7 +41,7 @@ bike_dynamic::bike_dynamic(){
 
 	torso  = rider_torso * k;
 	hand  = rider_hand * k;
-
+	head = {0, 0, rider_head * k, 10};
 
 }
 // Функция рассчета и прорисовки ломаной линии, состоящей из двух отрезов, расположенных под углом друг к другу таким образом, чтобы свободные концы отрезков были на расстоянии ab
@@ -179,13 +179,28 @@ void bike_dynamic::draw_bike(){
    // {
 
 
-//		triangle (rider_center.wheel.center, temp2, hip, knee, 1);
-//		triangle (rider_center.wheel.center, temp4, hip, knee, 1);
-//		triangle (rider_center.wheel.center, p4, torso, hand, 1);
+		triangle (rider_center.wheel.center, temp2, hip, knee, 1);
+		triangle (rider_center.wheel.center, temp4, hip, knee, 1);
+
+		glBegin(GL_LINES);
+			glVertex2f(rider_center.wheel.center.x, rider_center.wheel.center.y);
+			glVertex2f(rider_shoulders.wheel.center.x, rider_shoulders.wheel.center.y);
+
+		glEnd();
 
 
+		triangle (rider_shoulders.wheel.center, p4, hand, hand, -1);
 
 
+		head.center = {rider_shoulders.wheel.center + (rider_shoulders.wheel.center - rider_center.wheel.center) * 0.26};
+		glBegin(GL_LINE_LOOP );
+	    	for (int i=0; i<head.count; i++)
+			{
+	    		point temp = {(float)(head.center.x  + head.r * cos(2 * M_PI * i / head.count)), (float)(head.center.y  + head.r * sin(2 * M_PI * i / head.count))};
+	    		glVertex2f((temp.x), (temp.y));
+
+			}
+	    glEnd();
 
     glColor3d(0,0,0);
 

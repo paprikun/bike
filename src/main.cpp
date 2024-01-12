@@ -30,27 +30,36 @@ void graph_init(){
 
 
 	float wb = (float) WHEEL_BASE / 100 * 2;
-	wheel_dyn_1 = wheel_dynamic({{30, 145 + 100 + WHLR + 0}, WHLR, 20}, 1, 1);
-	wheel_dyn_2 = wheel_dynamic({{30 + wb, 145 + 100 + WHLR + 0}, WHLR, 20}, 0, 1);
-	rider_center 	= wheel_dynamic({{45, 145 + 100 + WHLR + 17}, 4, 20}, 0, 13);
 
-	rider_shoulders 	= wheel_dynamic({{60 + wb, 145 + 100 + WHLR + 0}, 4, 20}, 0, 1);
+	float start_h = 225;
+	wheel_dyn_1 = wheel_dynamic({{30,      start_h + WHLR + 0}, WHLR, 20}, 1, 6);
+	wheel_dyn_2 = wheel_dynamic({{30 + wb, start_h + WHLR + 0}, WHLR, 20}, 0, 6);
+
+
+
+	rider_center 	    = wheel_dynamic({{37, start_h + WHLR + 14}, 1, 20}, 0, 60);
+
+	rider_shoulders 	= wheel_dynamic({{44, start_h + WHLR + 20}, 1, 20}, 0, 20);
 
 
 	edges[0] = {&wheel_dyn_1, &wheel_dyn_2, 0};
-	edges[0].length = wb;
 
 	edges[1] = {&wheel_dyn_1, &rider_center, 0};
-	edges[1].length = EDGE_1_LEN_AVER;
 
 	edges[2] = {&wheel_dyn_2, &rider_center, 0};
-	edges[2].length = EDGE_2_LEN_AVER;
 
 	edges[3] = {&rider_center, &rider_shoulders, 0};
-	edges[3].length = EDGE_3_LEN_AVER;
 
 	edges[4] = {&rider_shoulders, &wheel_dyn_2, 0};
-	edges[4].length = EDGE_4_LEN_AVER;
+
+  	edges_init();
+	edges[0].length = EDGE_0_LEN_AVER_START;
+	edges[1].length = EDGE_1_LEN_AVER_START;
+	edges[2].length = EDGE_2_LEN_AVER_START;
+	edges[3].length = EDGE_3_LEN_AVER_START;
+	edges[4].length = EDGE_4_LEN_AVER_START;
+
+
 }
 
 
@@ -142,7 +151,7 @@ int main(int argc, char** argv)
 
   	glutInit(&argc, argv);
 
- 	keyboard_init();
+  	keyboard_init();
 	graph_init();
 
     glutInitDisplayMode(GLUT_SINGLE);

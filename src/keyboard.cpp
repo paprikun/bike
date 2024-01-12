@@ -28,13 +28,10 @@ void processNormalKeys(unsigned char key, int x, int y) {
 
 		if (key_space_on == 0){
 			PedalPower = 0;
-			bool temp = wheel_dyn_2.back_wheel;
-			wheel_dyn_2.back_wheel = wheel_dyn_1.back_wheel;
-			wheel_dyn_1.back_wheel = temp;
 
-			float temp_len = edges[2].length;
-			edges[2].length = edges[1].length;
-			edges[1].length = temp_len;
+
+
+
 			key_space_on = 1;
 		}
 		break;
